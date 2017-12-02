@@ -1,0 +1,6 @@
+1.In retrospect, what could you have done better to reduce the time you spent solving this assignment?
+I should planned out on paper how the EvaluateVisitor and PrintInOrder Visitor would work for each type of expression before coding
+2.What could the CSCI 2600 staff have done better to improve your learning experience in this assignment?
+Nothing really
+3.What do you know now that you wish you had known before beginning the assignment?
+I wish had known to use a stack in visitor (but now that I think about it, we probably went over that in class)

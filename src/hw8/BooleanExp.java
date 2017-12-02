@@ -233,8 +233,27 @@ class OrExp extends CompositeExp{
 
 }
 class NotExp extends CompositeExp{
+	/**
+	 * Abstract function: represents a 
+	 */
 	public NotExp(int exprCode, BooleanExp left, BooleanExp right, Boolean value, String varString) {
 		super(exprCode, left, right, value, varString);
+		checkRep();
+	}
+	private void checkRep() throws RuntimeException{
+		//System.out.println(this.getVarString());
+		if(this.getRight()!=null) {
+			throw new RuntimeException("The right expression must be null");
+		}
+		if(this.getExpressionCode()!=2) {
+			throw new RuntimeException("The expression code must be 2");
+		}
+		if(this.getVarString()!=null && !this.getVarString().isEmpty()) {
+			throw new RuntimeException("The varString must be null");
+		}
+		if(this.getLeft().equals(null)) {
+			throw new RuntimeException("The left expression cannot be null");
+		}
 	}
 	@Override
 	boolean evaluate(Context context) {
