@@ -1,0 +1,9 @@
+Boolean Exp:
+	Rep exposure on line 38 (return value.booleanValue())
+	Rep exposure on line 41 (return varString)
+	switch statement on line 60: switch (getExpressionCode())
+	The cases for BooleanExp.AND and BooleanExp.Or are very similar (lines 62-65 and lines 68-71)
+	The cases for BooleanExp.Const and BooleanExp.Var are very similar (line 74 and line 77)
+ExpressionParser:
+	Rep exposure on line 11 (return map.get(var).booleanValue())
+High coupling between Boolean Exp and ExpressionParser

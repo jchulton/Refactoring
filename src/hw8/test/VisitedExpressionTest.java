@@ -61,7 +61,7 @@ public class VisitedExpressionTest {
 		assertEquals("(x OR y) AND (x OR w)",parser.visitorPrint());
 
 	}
-
+	
 	@Test
 	public void test4() {		
 		ExpressionParser.position = 0;
@@ -76,7 +76,7 @@ public class VisitedExpressionTest {
 	public void test5() {		
 		ExpressionParser.position = 0;
 		BooleanExp e = ExpressionParser.parse("AND NOT x OR x w");
-		// assertEquals(e.toString(),"AND NOT x OR x w");
+	    assertEquals(e.toString(),"AND NOT x OR x w");
 		parser.init(e, contextMap);
 		assertEquals(false,parser.visitorEvaluate());
 		assertEquals("NOT x AND (x OR w)",parser.visitorPrint());

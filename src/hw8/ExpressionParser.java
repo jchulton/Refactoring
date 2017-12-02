@@ -70,7 +70,15 @@ public class ExpressionParser {
 			if ((left == null) || (right == null)) { 
 				return null;
 			}
-			return new BooleanExp(2,left,right,null,null);
+			return new AndExp(3,left,right,null,null);
+		}
+		if (token.equals("NOT ")) {
+			BooleanExp left = parse(str);
+		//	BooleanExp right = parse(str);
+			//if ((left == null) && (right == null) || ((left!=null) && right!=null)) { 
+			//	return null;
+		//	}
+			return new NotExp(2,left,null,null,null);
 		}
 		else if (token.equals("OR ")) {
 			BooleanExp left = parse(str);
@@ -78,13 +86,13 @@ public class ExpressionParser {
 			if ((left == null) || (right == null)) {
 				return null;
 			}
-			return new BooleanExp(3,left,right,null,null);			
+			return new OrExp(4,left,right,null,null);			
 		}
 		else if (token.equals("true") || token.equals("true ")) {
-			return new BooleanExp(0,null,null,Boolean.TRUE,null);
+			return new Constant(0,null,null,Boolean.TRUE,null);
 		}
 		else if (token.equals("false") || token.equals("false ")) {
-			return new BooleanExp(0,null,null,Boolean.FALSE,null);
+			return new Constant(0,null,null,Boolean.FALSE,null);
 		}
 		// Otherwise, the token is a variable (e.g., x, xyz). 
 		// Get rid of the white space if necessary 
@@ -92,7 +100,7 @@ public class ExpressionParser {
 		    if (token.charAt(token.length()-1)==' ') {
 		    	token = token.substring(0,token.length()-1);
 		    }
-		    return new BooleanExp(1,null,null,null,token);
+		    return new VarExp(1,null,null,null,token);
 		}
 			
 	}
@@ -116,7 +124,6 @@ public class ExpressionParser {
 	public String print(boolean preorder) {
 		return print(preorder,expression);
 	}
-	
 	/**
 	 * 
 	 * @param preorder
@@ -127,7 +134,7 @@ public class ExpressionParser {
 	private String print(boolean preorder, BooleanExp exp) {
 		StringBuffer result = new StringBuffer();
 		if (preorder) { // print in Preorder
-			switch (exp.getExpressionCode()) {
+			/*switch (exp.getExpressionCode()) {
 				case BooleanExp.AND: 
 					result.append("AND ");
 					result.append(print(preorder,exp.getLeft()));
@@ -146,10 +153,11 @@ public class ExpressionParser {
 				case BooleanExp.VAR:
 					result.append(exp.getVarString());
 					break;
-			}
+			}*/
+			return exp.printPreorder();
 		}			
 		else { // print Inorder, getting rid of redundant parentheses
-			switch (exp.getExpressionCode()) {
+		/*	switch (exp.getExpressionCode()) {
 				case BooleanExp.AND: 
 					if (exp.getLeft().getExpressionCode() > BooleanExp.AND) {
 						// if left operand is an expression of equal or lower precedence, parens are needed 
@@ -190,7 +198,9 @@ public class ExpressionParser {
 					break;
 				}
 			}
-			return result.toString();
+			return result.toString();*/
+			return exp.printInorder();
+		}
 		
 	}
 	/**
@@ -200,7 +210,7 @@ public class ExpressionParser {
 	 * @return value of BooleanExp exp in Context context
 	 */
 	private boolean evaluate(Context context, BooleanExp exp) {
-		
+		/*
 		if (exp.getExpressionCode() == BooleanExp.AND) {
 				return evaluate(context, exp.getLeft()) && 
 						evaluate(context, exp.getRight()); 
@@ -215,18 +225,22 @@ public class ExpressionParser {
 		else if (exp.getExpressionCode() == BooleanExp.VAR) {
 				return context.lookup(exp.getVarString());
 		}
-		return false;		
+		return false;*/
+		return exp.evaluate(context);
 	}
 
 		
 	public boolean visitorEvaluate() {
 		// TODO: Implement your Visitor-based evaluation here.
-		return false;
+		EvaluateVisitor ev=new EvaluateVisitor(context);
+		expression.accept(ev);
+		return ev.getEval();
 	}
 	
 	public String visitorPrint() {
-		// TODO: Implement your Visitor-based inorder printing here.
-		return "";
+		PrintInorder pi=new PrintInorder();
+		expression.accept(pi);
+		return pi.getInorder();
 	}
 	
 	
