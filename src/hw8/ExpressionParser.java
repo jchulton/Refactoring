@@ -238,7 +238,7 @@ public class ExpressionParser {
 	}
 	
 	public String visitorPrint() {
-		PrintInorder pi=new PrintInorder();
+		PrintInorderVisitor pi=new PrintInorderVisitor();
 		expression.accept(pi);
 		return pi.getInorder();
 	}

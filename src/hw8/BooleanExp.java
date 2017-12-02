@@ -100,6 +100,21 @@ public abstract class BooleanExp{
 class Constant extends BooleanExp {
 	public Constant(int exprCode, BooleanExp left, BooleanExp right, Boolean value, String varString) {
 		super(exprCode, left, right, value, varString);
+		checkRep();
+	}
+	private void checkRep() throws RuntimeException{
+		if(this.getRight()!=null) {
+			throw new RuntimeException("The right expression must be null");
+		}
+		if(this.getExpressionCode()!=0) {
+			throw new RuntimeException("The expression code must be 0");
+		}
+		if(this.getVarString()!=null && !this.getVarString().isEmpty()) {
+			throw new RuntimeException("The varString must be null");
+		}
+		if(this.getLeft()!=null) {
+			throw new RuntimeException("The left expression must be null");
+		}
 	}
 	@Override
 	boolean evaluate(Context context) {
@@ -108,7 +123,7 @@ class Constant extends BooleanExp {
 	@Override
 	String printPreorder() {
 		String value=""+this.getValue();
-		System.out.println(value);
+	//	System.out.println(value);
 		return value;
 	}
 	@Override
@@ -124,6 +139,21 @@ class Constant extends BooleanExp {
 class VarExp extends BooleanExp {
 	public VarExp(int exprCode, BooleanExp left, BooleanExp right, Boolean value, String varString) {
 		super(exprCode, left, right, value, varString);
+		checkRep();
+	}
+	private void checkRep() throws RuntimeException{
+		if(this.getRight()!=null) {
+			throw new RuntimeException("The right expression must be null");
+		}
+		if(this.getExpressionCode()!=1) {
+			throw new RuntimeException("The expression code must be 1");
+		}
+		if(this.getVarString()==null || this.getVarString().isEmpty()) {
+			throw new RuntimeException("The varString cannot be null");
+		}
+		if(this.getLeft()!=null) {
+			throw new RuntimeException("The left expression must be null");
+		}
 	}
 	@Override
 	boolean evaluate(Context context) {
@@ -135,7 +165,7 @@ class VarExp extends BooleanExp {
 			return "";
 		}
 		String value=this.getVarString();
-		System.out.println(value);
+		//System.out.println(value);
 		return value;
 	}
 	@Override
@@ -156,7 +186,22 @@ abstract class CompositeExp extends BooleanExp {
 class AndExp extends CompositeExp{
 	public AndExp(int exprCode, BooleanExp left, BooleanExp right, Boolean value, String varString) {
 		super(exprCode, left, right, value, varString);
+		checkRep();
 	}
+	private void checkRep() throws RuntimeException{
+	if(this.getRight().equals(null)) {
+		throw new RuntimeException("The right expression cannot be null");
+	}
+	if(this.getExpressionCode()!=3) {
+		throw new RuntimeException("The expression code must be 3");
+	}
+	if(this.getVarString()!=null && !this.getVarString().isEmpty()) {
+		throw new RuntimeException("The varString must be null");
+	}
+	if(this.getLeft().equals(null)) {
+		throw new RuntimeException("The left expression cannot be null");
+	}
+}
 	@Override
 	boolean evaluate(Context context) {
 		return getLeft().evaluate(context) && getRight().evaluate(context);
@@ -195,6 +240,21 @@ class AndExp extends CompositeExp{
 class OrExp extends CompositeExp{
 	public OrExp(int exprCode, BooleanExp left, BooleanExp right, Boolean value, String varString) {
 		super(exprCode, left, right, value, varString);
+		checkRep();
+	}
+	private void checkRep() throws RuntimeException{
+		if(this.getRight().equals(null)) {
+			throw new RuntimeException("The right expression cannot be null");
+		}
+		if(this.getExpressionCode()!=4) {
+			throw new RuntimeException("The expression code must be 3");
+		}
+		if(this.getVarString()!=null && !this.getVarString().isEmpty()) {
+			throw new RuntimeException("The varString must be null");
+		}
+		if(this.getLeft().equals(null)) {
+			throw new RuntimeException("The left expression cannot be null");
+		}
 	}
 	@Override
 	boolean evaluate(Context context) {
@@ -233,26 +293,16 @@ class OrExp extends CompositeExp{
 
 }
 class NotExp extends CompositeExp{
-	/**
-	 * Abstract function: represents a 
-	 */
 	public NotExp(int exprCode, BooleanExp left, BooleanExp right, Boolean value, String varString) {
 		super(exprCode, left, right, value, varString);
 		checkRep();
 	}
 	private void checkRep() throws RuntimeException{
-		//System.out.println(this.getVarString());
-		if(this.getRight()!=null) {
-			throw new RuntimeException("The right expression must be null");
+		if(this.getRight()==null && this.getLeft()==null) {
+			throw new RuntimeException("One of the expressions should be non null");
 		}
-		if(this.getExpressionCode()!=2) {
-			throw new RuntimeException("The expression code must be 2");
-		}
-		if(this.getVarString()!=null && !this.getVarString().isEmpty()) {
-			throw new RuntimeException("The varString must be null");
-		}
-		if(this.getLeft().equals(null)) {
-			throw new RuntimeException("The left expression cannot be null");
+		if(this.getExpressionCode()==0 || this.getExpressionCode()==1) {
+			throw new RuntimeException("The expression code cannot be 0 or 1, cannot be the same as a constant or var expression.");
 		}
 	}
 	@Override
@@ -310,13 +360,9 @@ class NotExp extends CompositeExp{
 		}
 		public void visit(VarExp exp) {
 			 stackEval.push(context.lookup(exp.getVarString()));
-			 System.out.println(exp.getVarString());
-			// System.out.println(eval);
 		}
 		public void visit(Constant exp) {
 			stackEval.push(exp.getValue());
-		//	System.out.println(exp.toString());
-		//	 System.out.println(eval);
 		}
 		public void visit(AndExp exp) {
 			 exp.getLeft().accept(this);
@@ -329,8 +375,6 @@ class NotExp extends CompositeExp{
 			 else {
 				 stackEval.push(false);
 			 }
-			 System.out.println(exp.toString());
-		//	 System.out.println(b1+" "+ b2+" "+ eval);
 		}
 		public void visit(OrExp exp) {
 			 exp.getLeft().accept(this);
@@ -343,27 +387,18 @@ class NotExp extends CompositeExp{
 			 else {
 				 stackEval.push(false);
 			 }
-			 System.out.println(exp.toString());
-			// System.out.println(b1+" "+ b2+" "+ eval);
 		}
 		public void visit(NotExp exp) {
 			 exp.getLeft().accept(this);
 			 boolean b1=stackEval.pop();
 			 stackEval.push(!b1);
-			 System.out.println(exp.getVarString());
-	//		 System.out.println(eval);
 		}	
 		public boolean getEval() {
 			return stackEval.pop();
 		}
 	}
-	class PrintInorder implements Visitor{
+	class PrintInorderVisitor implements Visitor{
 		private Stack<String> stackResult=new Stack<String>();
-		//@Override
-		//public void visit(BooleanExp exp) {
-		//	result+="ERROR";
-		//}
-
 		@Override
 		public void visit(Constant exp) {
 			stackResult.push(""+exp.getValue());
@@ -428,22 +463,6 @@ class NotExp extends CompositeExp{
 				result+=stackResult.pop();
 			}
 			stackResult.push(result);
-		/*	if(exp.getLeft()==null) {
-				if(exp.getRight().getExpressionCode() >= exp.getExpressionCode()) {
-					result+="(" + exp.getRight().printInorder() + ")";
-
-				}
-				else {
-					result+=exp.getRight().printPreorder();
-				}
-			}
-			else if(exp.getLeft().getExpressionCode() > exp.getExpressionCode()) {
-				result+="(" + exp.getLeft().printInorder() + ")";
-			}
-			else {
-				result+=exp.getLeft().printInorder();
-			}	
-		}*/
 		}
 		public String getInorder() {
 			return stackResult.pop();
@@ -451,7 +470,6 @@ class NotExp extends CompositeExp{
 		
 	}
 	interface Visitor{
-		//public void visit(BooleanExp exp);
 		public void visit(Constant exp);
 		public void visit(VarExp exp);
 		public void visit(AndExp exp);
